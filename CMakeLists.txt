@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.9)
+project(z3_pres_upb)
+find_library(Z3_LIB z3 libz3)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/timetable/)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/routing_table/)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sudoku/)
