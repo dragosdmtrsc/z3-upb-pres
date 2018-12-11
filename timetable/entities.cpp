@@ -123,15 +123,27 @@ std::ostream &operator<<(std::ostream &os, const orar &p) {
 }
 
 std::ostream &operator<<(std::ostream &os, const sched &p) {
-    return os << static_cast<int>(p.curs1->an) << ',' << p.serie1->nume << ',' << p.curs1->nume << ',' << p.day
+    std::string sapt;
+    switch (p.day) {
+        case L: sapt = "L"; break;
+        case M:sapt = "M";break;
+        case Mi:sapt = "Mi";break;
+        case J:sapt = "J";break;
+        case V:sapt = "V";break;
+        case S:sapt = "S";break;
+        case D:sapt = "D";break;
+    }
+    return os << static_cast<int>(p.curs1->an) << ',' << p.serie1->nume << ',' << p.curs1->nume << ',' << sapt
               << ',' << p.start << ',' << p.end << ',' << p.profesor->nume << ',' << p.sala1->nume;
 }
 
 bool schedule::get_orar(orar &orar) {
     if (!query)
         build_query();
-    if (query->check() == z3::check_result::sat) {
+    auto cr = query->check();
+    if (cr == z3::check_result::sat) {
         orar = build_orar(query->get_model());
+        return true;
     } else {
         return false;
     }

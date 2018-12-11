@@ -75,15 +75,16 @@ int main(int argc, char **argv) {
         ++lineno;
     }
     for (auto re : rt) {
-        slv.push();
-        uint32_t mask = (0xFFFFFFFF << (32 - re.first.pref)) & 0xFFFFFFFF;
-        auto constraint = (ipe.extract(31, 32 - re.first.pref) == ctx.bv_val(re.first.ipv.v >> (32 - re.first.pref), re.first.pref));
-        slv.add(constraint);
-        if (slv.check() == z3::check_result::unsat) {
-            std::cerr << "dead entry at line " << std::get<2>(re.second) << '\n';
+        if (re.first.pref != 0) {
+            slv.push();
+            auto constraint = (ipe.extract(31, 32 - re.first.pref) == ctx.bv_val(re.first.ipv.v >> (32 - re.first.pref), re.first.pref));
+            slv.add(constraint);
+            if (slv.check() == z3::check_result::unsat) {
+                std::cerr << "dead entry at line " << std::get<2>(re.second) << '\n';
+            }
+            slv.pop();
+            slv.add(!constraint);
         }
-        slv.pop();
-        slv.add(!constraint);
     }
     return 0;
 }
